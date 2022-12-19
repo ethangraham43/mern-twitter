@@ -3,6 +3,7 @@
 const express = require("express");
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const debug = require('debug')('backend:server');
 
 const cors = require('cors');
 const csurf = require('csurf');
@@ -13,6 +14,7 @@ const tweetsRouter = require('./routes/api/tweets');
 const csrfRouter = require('./routes/api/csrf');
 
 const app = express();
+
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -38,6 +40,10 @@ app.use(
     }
   })
 );
+require('./models/User');
+require('./config/passport'); // <-- ADD THIS LINE
+const passport = require('passport');
+app.use(passport.initialize());
 
 // Attach Express routers
 app.use('/api/users', usersRouter);
@@ -50,12 +56,12 @@ app.use((req, res, next) => {
     next(err);
   });
   
-  const serverErrorLogger = debug('backend:error');
+//   const serverErrorLogger = debug('backend:error');
   
   // Express custom error handler that will be called whenever a route handler or
   // middleware throws an error or invokes the `next` function with a truthy value
   app.use((err, req, res, next) => {
-    serverErrorLogger(err);
+    // serverErrorLogger(err);
     const statusCode = err.statusCode || 500;
     res.status(statusCode);
     res.json({
