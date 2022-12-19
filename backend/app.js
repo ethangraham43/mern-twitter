@@ -41,6 +41,7 @@ app.use(
   })
 );
 require('./models/User');
+require('./models/Tweet');
 require('./config/passport'); // <-- ADD THIS LINE
 const passport = require('passport');
 app.use(passport.initialize());

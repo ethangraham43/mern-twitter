@@ -4,6 +4,8 @@ const express = require('express');
 const router = express.Router();
 const { loginUser, restoreUser } = require('../../config/passport');
 const { isProduction } = require('../../config/keys');
+const validateRegisterInput = require('../../validations/register');
+const validateLoginInput = require('../../validations/login');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -27,6 +29,8 @@ router.get('/current', restoreUser, (req, res) => {
     email: req.user.email
   });
 });
+
+
 
 // POST /api/users/register
 router.post('/register', async (req, res, next) => {
@@ -74,7 +78,7 @@ router.post('/register', async (req, res, next) => {
 });
 
 // POST /api/users/login
-router.post('/login', async (req, res, next) => {
+router.post('/login', validateLoginInput, async (req, res, next) => {
   passport.authenticate('local', async function(err, user) {
     if (err) return next(err);
     if (!user) {
